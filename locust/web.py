@@ -198,6 +198,15 @@ class WebUI:
             ] = f"attachment;filename={_download_csv_suggest_file_name(filename_prefix)}"
             return response
 
+        @app.route("/stats/requests/json")
+        @self.auth_required_if_enabled
+        def request_stats_json():
+            data = self.stats_csv_writer.all_requests_json()
+            response = make_response(data)
+            response.headers["Content-type"] = "application/json"
+            response.headers["Content-disposition"] = f"attachment;filename=all_requests_json_{time()}.json"
+            return response
+
         @app.route("/stats/requests/csv")
         @self.auth_required_if_enabled
         def request_stats_csv():
