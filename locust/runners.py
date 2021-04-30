@@ -137,10 +137,12 @@ class Runner:
         Distributes the amount of users for each WebLocust-class according to it's weight
         returns a list "bucket" with the weighted users
         """
+        # Selection, or all tests
+        users = getattr(self, "user_class_test_selection", self.user_classes)
         bucket = []
-        weight_sum = sum([user.weight for user in self.user_class_test_selection])
+        weight_sum = sum([user.weight for user in users])
         residuals = {}
-        for user in self.user_class_test_selection:
+        for user in users:
             if self.environment.host is not None:
                 user.host = self.environment.host
 
@@ -169,6 +171,7 @@ class Runner:
 
     def spawn_users(self, spawn_count, spawn_rate, wait=False):
         bucket = self.weight_users(spawn_count)
+        users = getattr(self, "user_class_test_selection", self.user_classes)
         spawn_count = len(bucket)
         if self.state == STATE_INIT or self.state == STATE_STOPPED:
             self.update_state(STATE_SPAWNING)
@@ -178,7 +181,7 @@ class Runner:
             "Spawning %i users at the rate %g users/s (%i users already running)..."
             % (spawn_count, spawn_rate, existing_count)
         )
-        occurrence_count = dict([(l.__name__, 0) for l in self.user_class_test_selection])
+        occurrence_count = dict([(l.__name__, 0) for l in users])
 
         def spawn():
             sleep_time = 1.0 / spawn_rate
