@@ -176,14 +176,10 @@ def main():
             sys.exit(1)
         else:
             names = set(options.user_classes) & set(user_classes.keys())
-            selected_user_classes = [user_classes[n] for n in names]
-            user_classes = selected_user_classes
-            runner.user_class_test_selection = selected_user_classes
+            user_classes = [user_classes[n] for n in names]
     else:
         # list() call is needed to consume the dict_view object in Python 3
-        all_user_classes = list(user_classes.values())
-        user_classes = all_user_classes
-        runner.user_class_test_selection = all_user_classes
+        user_classes = list(user_classes.values())
 
     if os.name != "nt" and not options.master:
 
