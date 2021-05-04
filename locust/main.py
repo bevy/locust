@@ -161,6 +161,9 @@ def main():
             print("    " + name)
         sys.exit(0)
 
+    # Preserve User Classes
+    preserved_user_classes = user_classes
+
     if not user_classes:
         logger.error("No User class found!")
         sys.exit(1)
@@ -242,6 +245,15 @@ def main():
             sys.exit(-1)
     else:
         runner = environment.create_local_runner()
+
+    # Try to set user_class_test_selection to match web ui changes
+    # user_classes set on options in cases where running headless
+    if options.user_classes:
+        # bad input already validated in argparsing. do not repeat here.
+        names = set(options.user_classes) & set(preserved_user_classes.keys())
+        runner.user_class_test_selection = [preserved_user_classes[n] for n in names]
+    else:
+        runner.user_class_test_selection = list(preserved_user_classes.values())
 
     # main_greenlet is pointing to runners.greenlet by default, it will point the web greenlet later if in web mode
     main_greenlet = runner.greenlet
